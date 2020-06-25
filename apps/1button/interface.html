@@ -14,6 +14,10 @@ function saveRecord(record,name) {
   Util.saveCSV(name, csv);
 }
 
+function saveAccelRecord(record,name) {
+  var csv = `${record.map(rec=>[rec.start, rec.x,rec.y,rec.z].join(",")).join("\n")}`;
+  Util.saveCSV(name, csv);
+}
 
 function recordLineToObject(l) {
   var t = l.trim().split(",");
@@ -24,11 +28,31 @@ function recordLineToObject(l) {
   return o;
 }
 
+function AccelRecordLineToObject(l) {
+  var t = l.trim().split(",");
+  var o = {
+    time: parseFloat(t[0]),
+    x: parseFloat(t[1]),
+    y: parseFloat(t[2]),
+    x: parseFloat(t[3]),
+  };
+  return o;
+}
+
 function downloadRecord(callback) {
   Util.showModal("Downloading one-button tracker data...");
   Util.readStorageFile(`one_button_presses.csv`,data=>{
     Util.hideModal();
     var record = data.trim().split("\n").map(l=>recordLineToObject(l));
+    callback(record);
+  });
+}
+
+function downloadAccelerometerRecord(callback) {
+  Util.showModal("Downloading one-button tracker data...");
+  Util.readStorageFile(`one_button_presses.csv`,data=>{
+    Util.hideModal();
+    var record = data.trim().split("\n").map(l=>AccelRecordLineToObject(l));
     callback(record);
   });
 }
@@ -46,6 +70,7 @@ function getRecordList() {
           </div>
           <div class="card-body"></div>
           <div class="card-footer">
+            <button class="btn btn-primary" task="download">Download</button>
             <button class="btn btn-primary" task="download">Download</button>
             <button class="btn btn-default" task="delete">Delete</button>
           </div>
@@ -70,6 +95,9 @@ function getRecordList() {
         }
         if (task=="download") {
           downloadRecord(record => saveRecord(record, `one_button_presses`));
+        }
+        if (task=="download-accelerometer"){
+          downloadAccelerometerRecord(record => saveAccelRecord(record, `acceldata`));
         }
       });
     }
