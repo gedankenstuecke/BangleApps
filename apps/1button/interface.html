@@ -15,7 +15,7 @@ function saveRecord(record,name) {
 }
 
 function saveAccelRecord(record,name) {
-  var csv = `${record.map(rec=>[rec.start, rec.x,rec.y,rec.z].join(",")).join("\n")}`;
+  var csv = `${record.map(rec=>[rec.time, rec.x,rec.y,rec.z].join(",")).join("\n")}`;
   Util.saveCSV(name, csv);
 }
 
@@ -31,10 +31,10 @@ function recordLineToObject(l) {
 function AccelRecordLineToObject(l) {
   var t = l.trim().split(",");
   var o = {
-    time: parseFloat(t[0]),
+    time: parseInt(t[0]),
     x: parseFloat(t[1]),
     y: parseFloat(t[2]),
-    x: parseFloat(t[3]),
+    z: parseFloat(t[3]),
   };
   return o;
 }
